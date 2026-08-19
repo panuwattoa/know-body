@@ -1,15 +1,17 @@
 package app.knowbody.knowbody
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.os.Build
 import android.widget.RemoteViews
-import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetProvider
 
 /** Home-screen widget: the KnowBody calorie ring + streak. Tapping it opens the app. */
@@ -29,8 +31,14 @@ class KnowBodyWidget : HomeWidgetProvider() {
             views.setImageViewBitmap(R.id.kb_ring, ring(kcalLeft, pct))
             views.setTextViewText(R.id.kb_streak, "🔥 $streak")
 
-            val pending = HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java)
-            views.setOnClickPendingIntent(R.id.kb_root, pending)
+            // Build the tap-to-open intent directly — home_widget's helper crashes
+            // on Android 15/16 (pendingIntentBackgroundActivityStartMode).
+            val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                ?: Intent(context, MainActivity::class.java)
+            launch.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            val flags = PendingIntent.FLAG_UPDATE_CURRENT or
+                (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0)
+            views.setOnClickPendingIntent(R.id.kb_root, PendingIntent.getActivity(context, 0, launch, flags))
 
             appWidgetManager.updateAppWidget(id, views)
         }
