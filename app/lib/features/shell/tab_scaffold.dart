@@ -29,21 +29,9 @@ class TabScaffold extends StatelessWidget {
       // Let the page fill the full height behind the floating nav pill — removes
       // the scaffold-background band that showed below the bar.
       extendBody: true,
-      // NOTE: don't wrap navigationShell in an AnimatedSwitcher/PageView — it
-      // carries an internal GlobalKey and can't exist twice during a transition
-      // (crashes with "Duplicate GlobalKey"). A velocity swipe changes tabs instead.
-      body: GestureDetector(
-        onHorizontalDragEnd: (d) {
-          final v = d.primaryVelocity ?? 0;
-          final i = navigationShell.currentIndex;
-          if (v < -300 && i < items.length - 1) {
-            navigationShell.goBranch(i + 1);
-          } else if (v > 300 && i > 0) {
-            navigationShell.goBranch(i - 1);
-          }
-        },
-        child: navigationShell,
-      ),
+      // Body is the shell, whose container is a swipeable PageView
+      // (see BranchPageView via the route's navigatorContainerBuilder).
+      body: navigationShell,
       bottomNavigationBar: SafeArea(
         child: Container(
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),

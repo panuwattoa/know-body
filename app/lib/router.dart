@@ -19,6 +19,7 @@ import 'features/onboarding/name_pet_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/pet/pet_screen.dart';
 import 'features/share/share_screen.dart';
+import 'features/shell/branch_page_view.dart';
 import 'features/shell/tab_scaffold.dart';
 import 'features/streaks/streaks_screen.dart';
 import 'features/trend/trend_screen.dart';
@@ -50,8 +51,11 @@ final router = GoRouter(
     GoRoute(path: '/workout', builder: (_, st) => WorkoutRunnerScreen(workout: st.extra as WorkoutPlan)),
     GoRoute(path: '/streaks', builder: (_, __) => const StreaksScreen()),
     GoRoute(path: '/share', builder: (_, __) => const ShareScreen()),
-    StatefulShellRoute.indexedStack(
+    StatefulShellRoute(
       builder: (_, __, shell) => TabScaffold(navigationShell: shell),
+      // Swipeable PageView container — pages follow the finger between tabs.
+      navigatorContainerBuilder: (_, shell, children) =>
+          BranchPageView(navigationShell: shell, children: children),
       branches: [
         StatefulShellBranch(routes: [GoRoute(path: '/home', builder: (_, __) => const HomeScreen())]),
         StatefulShellBranch(routes: [GoRoute(path: '/food', builder: (_, __) => const FoodScreen())]),
