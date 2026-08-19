@@ -21,6 +21,9 @@ abstract final class AuthConfig {
 /// Initialize Supabase if configured. Call before runApp().
 Future<void> initAuth() async {
   if (AuthConfig.enabled) {
+    // anonKey is the correct param for supabase_flutter 2.8; newer majors rename
+    // it to publishableKey. Pinned here for compatibility.
+    // ignore: deprecated_member_use
     await Supabase.initialize(url: AuthConfig.url, anonKey: AuthConfig.anonKey);
   }
 }

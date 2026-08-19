@@ -2,7 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -13,18 +16,20 @@ import (
 	"knowbody/api/internal/plan"
 )
 
+var errEmptyProgram = errors.New("empty program from model")
+
 // POST /v1/profile/setup — body metrics → computed calorie & macro targets.
 func (s *Server) handleSetupProfile(w http.ResponseWriter, r *http.Request) {
 	var in struct {
-		Goal      string  `json:"goal"`
-		Locale    string  `json:"locale"`
-		Sex       string  `json:"sex"`      // m | f
-		Age       int     `json:"age"`
-		HeightCm  float64 `json:"heightCm"`
-		WeightKg  float64 `json:"weightKg"`
-		Activity   string `json:"activity"` // sedentary|light|moderate|active|very
-		GoalDir    string `json:"goalDir"`  // lose|maintain|gain
-		TargetDate string `json:"targetDate"` // "YYYY-MM-DD" or ""
+		Goal       string  `json:"goal"`
+		Locale     string  `json:"locale"`
+		Sex        string  `json:"sex"` // m | f
+		Age        int     `json:"age"`
+		HeightCm   float64 `json:"heightCm"`
+		WeightKg   float64 `json:"weightKg"`
+		Activity   string  `json:"activity"`   // sedentary|light|moderate|active|very
+		GoalDir    string  `json:"goalDir"`    // lose|maintain|gain
+		TargetDate string  `json:"targetDate"` // "YYYY-MM-DD" or ""
 	}
 	if err := httpx.Decode(r, &in); err != nil {
 		httpx.Error(w, http.StatusBadRequest, "invalid body")
@@ -228,11 +233,33 @@ func (s *Server) handleWorkoutProgram(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Generate with AI.
-	raw, err := s.food.GenerateProgram(r.Context(), food.ProgramInput{
+	// Generate with AI — retry a couple times before falling back, since transient
+	// model timeouts/rate-limits would otherwise drop us to the built-in plan.
+	in := food.ProgramInput{
 		Sex: m.Sex, Age: m.Age, HeightCm: m.HeightCm, WeightKg: m.WeightKg,
 		Activity: m.Activity, Goal: m.Goal, GoalDir: m.GoalDir, TargetDate: targetStr, Weeks: weeks, Locale: "th",
-	})
+	}
+	var raw []byte
+	for attempt := 0; attempt < 3; attempt++ {
+		raw, err = s.food.GenerateProgram(r.Context(), in)
+		if err != nil {
+			slog.Warn("program gen failed", "attempt", attempt, "err", err.Error())
+			// Don't burn retries on a quota/rate-limit error — fall back immediately.
+			if strings.Contains(err.Error(), "429") || strings.Contains(err.Error(), "RESOURCE_EXHAUSTED") {
+				break
+			}
+		}
+		if err == nil {
+			// require a usable workouts array, else retry
+			var check struct {
+				Workouts []json.RawMessage `json:"workouts"`
+			}
+			if json.Unmarshal(raw, &check) == nil && len(check.Workouts) > 0 {
+				break
+			}
+			err = errEmptyProgram
+		}
+	}
 	if err != nil {
 		// Fallback: rule-based plan.
 		workouts := plan.Suggest(m.Goal, m.GoalDir)

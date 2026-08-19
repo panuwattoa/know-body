@@ -43,6 +43,8 @@ func (c *GeminiClient) AnalyzeStructured(ctx context.Context, instruction string
 			"responseMimeType": "application/json",
 			"responseSchema":   toGeminiSchema(schema),
 			"temperature":      0.2,
+			// Programs are large; without a high cap the JSON gets truncated → invalid.
+			"maxOutputTokens": 8192,
 		},
 	}
 	buf, _ := json.Marshal(reqBody)
@@ -72,15 +74,29 @@ func (c *GeminiClient) AnalyzeStructured(ctx context.Context, instruction string
 					Text string `json:"text"`
 				} `json:"parts"`
 			} `json:"content"`
+			FinishReason string `json:"finishReason"`
 		} `json:"candidates"`
 	}
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return nil, err
 	}
-	if len(parsed.Candidates) == 0 || len(parsed.Candidates[0].Content.Parts) == 0 {
+	if len(parsed.Candidates) == 0 {
+		return nil, fmt.Errorf("gemini: no candidates: %s", body)
+	}
+	cand := parsed.Candidates[0]
+	if cand.FinishReason != "" && cand.FinishReason != "STOP" {
+		// e.g. MAX_TOKENS / SAFETY — the JSON is likely partial/invalid.
+		return nil, fmt.Errorf("gemini finishReason=%s", cand.FinishReason)
+	}
+	// Join all parts (the model may split a long JSON across parts).
+	var sb strings.Builder
+	for _, p := range cand.Content.Parts {
+		sb.WriteString(p.Text)
+	}
+	if sb.Len() == 0 {
 		return nil, fmt.Errorf("gemini: empty response")
 	}
-	return json.RawMessage(parsed.Candidates[0].Content.Parts[0].Text), nil
+	return json.RawMessage(sb.String()), nil
 }
 
 // toGeminiSchema converts our JSON-Schema-ish map to Gemini's schema dialect,
