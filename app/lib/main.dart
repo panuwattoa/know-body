@@ -6,11 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth/auth.dart';
 import 'l10n/strings.dart';
 import 'router.dart';
+import 'services/prefs.dart';
 import 'state/providers.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Prefs.init();
   await initAuth();
   // Edge-to-edge with a transparent system nav bar (removes the white bar below).
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

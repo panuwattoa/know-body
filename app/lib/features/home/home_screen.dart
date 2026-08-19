@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../api/models.dart';
 import '../../auth/auth.dart';
 import '../../l10n/strings.dart';
+import '../../services/prefs.dart';
 import '../../state/providers.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.g.dart';
@@ -116,6 +117,7 @@ class _Header extends StatelessWidget {
             title: Text(t.signOut, style: AppTheme.body()),
             onTap: () async {
               Navigator.pop(ctx);
+              await Prefs.setOnboarded(false);
               await Auth.signOut();
             },
           ),

@@ -21,6 +21,7 @@ dependencies:
   share_plus: ^10.1.2 # share progression cards
   path_provider: ^2.1.4 # temp file for share image
   supabase_flutter: ^2.8.0 # auth (email/Apple/Google) — optional, config-gated
+  shared_preferences: ^2.3.2 # persist onboarded flag
 
 dev_dependencies:
   flutter_lints: ^4.0.0

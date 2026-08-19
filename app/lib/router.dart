@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'api/models.dart';
 import 'auth/auth.dart';
 import 'features/auth/login_screen.dart';
+import 'services/prefs.dart';
 import 'features/food/add_meal_screen.dart';
 import 'features/food/food_screen.dart';
 import 'features/home/home_screen.dart';
@@ -25,7 +26,8 @@ import 'features/trend/trend_screen.dart';
 /// App navigation. Onboarding flow (goal → metrics → calorie result → name pet)
 /// then the main 5-tab shell. Add-meal is a full-screen route above the shell.
 final router = GoRouter(
-  initialLocation: AuthConfig.enabled ? '/login' : '/onboarding',
+  // Returning users skip onboarding.
+  initialLocation: AuthConfig.enabled ? '/login' : (Prefs.onboarded ? '/home' : '/onboarding'),
   // Re-run redirect when the Supabase auth state changes.
   refreshListenable: AuthConfig.enabled ? _AuthRefresh() : null,
   redirect: (context, state) {
@@ -33,7 +35,7 @@ final router = GoRouter(
     final loggedIn = Auth.isSignedIn;
     final atLogin = state.matchedLocation == '/login';
     if (!loggedIn) return atLogin ? null : '/login';
-    if (atLogin) return '/onboarding';
+    if (atLogin) return Prefs.onboarded ? '/home' : '/onboarding';
     return null;
   },
   routes: [

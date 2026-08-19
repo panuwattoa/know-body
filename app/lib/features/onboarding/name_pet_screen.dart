@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/strings.dart';
+import '../../services/prefs.dart';
 import '../../state/providers.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.g.dart';
@@ -36,6 +37,7 @@ class _NamePetScreenState extends ConsumerState<NamePetScreen> {
     } catch (_) {
       // non-fatal — pet keeps its default name
     }
+    await Prefs.setOnboarded(true); // remember: skip onboarding next launch
     if (mounted) context.go('/home');
   }
 
