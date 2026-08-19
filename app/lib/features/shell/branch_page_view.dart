@@ -48,7 +48,7 @@ class _BranchPageViewState extends State<BranchPageView> {
     return PageView(
       controller: _controller,
       onPageChanged: _onPageChanged,
-      physics: const ClampingScrollPhysics(),
+      // Default PageScrollPhysics gives natural finger-tracking + snap momentum.
       children: widget.children,
     );
   }
