@@ -1,0 +1,40 @@
+# ── OS / editor ──
+.DS_Store
+*.swp
+.idea/
+.vscode/
+*.log
+
+# ── secrets ──
+.env
+.env.*
+!.env.example
+*.pem
+service-account*.json
+
+# ── Go (api/) ──
+api/bin/
+api/tmp/
+api/vendor/
+*.out
+
+# ── Flutter (app/) ──
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/build/
+app/ios/Pods/
+app/ios/.symlinks/
+app/android/.gradle/
+app/android/local.properties
+app/**/GeneratedPluginRegistrant.*
+
+# ── Next.js (web/) ──
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel
+
+# ── design handoff (kept locally, not committed) ──
+_handoff/
+Fitness Pet Calorie Tracker-handoff.zip

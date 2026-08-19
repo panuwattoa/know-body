@@ -1,0 +1,75 @@
+@import "./tokens.g.css";
+
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap&subset=thai,latin");
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--kb-font);
+  background: var(--kb-bg);
+  color: var(--kb-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* nav */
+.nav { position: sticky; top: 0; z-index: 20; background: rgba(237,237,231,.8); backdrop-filter: blur(12px); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; }
+.leaf { width: 32px; height: 32px; border-radius: 10px; background: var(--kb-ink); display: grid; place-items: center; }
+.nav-links { display: flex; gap: 26px; align-items: center; font-size: 15px; color: var(--kb-inkSoft); }
+.nav-links a:hover { color: var(--kb-accentText); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 46px; padding: 0 22px;
+  border-radius: var(--kb-radius-button); font-weight: 600; font-size: 15px; cursor: pointer; border: none; }
+.btn-ink { background: var(--kb-ink); color: #fff; }
+.btn-lime { background: var(--kb-lime); color: var(--kb-ink); }
+.btn-ghost { background: rgba(255,255,255,.7); color: var(--kb-ink); }
+.lang { background: none; border: 1px solid rgba(18,18,18,.15); border-radius: 999px; height: 36px; padding: 0 14px;
+  font: 500 13px var(--kb-font); cursor: pointer; }
+
+/* hero */
+.hero { padding: 72px 0 40px; position: relative; overflow: hidden; }
+.tagline { display: inline-block; background: var(--kb-limePale); color: var(--kb-accentDeep);
+  padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 13px; }
+.hero h1 { font-size: clamp(38px, 6vw, 68px); line-height: 1.04; letter-spacing: -2px; margin: 22px 0 18px; white-space: pre-line; }
+.hero p { font-size: 19px; line-height: 1.55; color: var(--kb-inkSoft); max-width: 620px; }
+.hero-cta { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+.blob { position: absolute; right: -160px; top: -120px; width: 560px; height: 560px; border-radius: 50%;
+  background: var(--kb-lime); z-index: -1; opacity: .8; }
+
+/* sections */
+section { padding: 56px 0; }
+h2 { font-size: clamp(26px, 4vw, 40px); letter-spacing: -1px; margin-bottom: 32px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+.card { background: var(--kb-card); border-radius: var(--kb-radius-card); padding: 26px;
+  box-shadow: var(--kb-shadow-card); }
+.card h3 { font-size: 19px; margin-bottom: 8px; }
+.card p { color: var(--kb-inkSoft); font-size: 15px; line-height: 1.5; }
+
+/* pricing */
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 760px; }
+.plan { background: var(--kb-card); border-radius: var(--kb-radius-hero); padding: 30px; }
+.plan.hl { background: var(--kb-ink); color: #fff; }
+.plan.hl .price, .plan.hl li { color: #fff; }
+.plan .name { font-weight: 600; font-size: 18px; }
+.price { font-size: 48px; font-weight: 600; letter-spacing: -2px; margin: 12px 0 2px; }
+.price small { font-size: 16px; font-weight: 500; color: var(--kb-inkSoft); }
+.plan ul { list-style: none; margin: 18px 0 22px; display: flex; flex-direction: column; gap: 10px; }
+.plan li { display: flex; gap: 9px; font-size: 15px; }
+.plan li::before { content: "✓"; color: var(--kb-accentText); font-weight: 700; }
+.plan.hl li::before { color: var(--kb-lime); }
+
+/* waitlist */
+.waitlist { background: var(--kb-lime); border-radius: var(--kb-radius-hero); padding: 48px; text-align: center; }
+.waitlist form { display: flex; gap: 10px; max-width: 440px; margin: 22px auto 0; }
+.waitlist input { flex: 1; height: 52px; border-radius: var(--kb-radius-button); border: none; padding: 0 18px;
+  font: 400 16px var(--kb-font); }
+footer { padding: 40px 0; color: var(--kb-inkSoft); text-align: center; font-size: 14px; }
+
+@media (max-width: 640px) { .nav-links a:not(.btn) { display: none; } }
