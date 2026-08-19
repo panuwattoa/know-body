@@ -24,6 +24,7 @@ class KbStrings {
   String get signOut => _('ออกจากระบบ', 'Sign out');
   String get orDivider => _('หรือ', 'or');
   String get continueGoogle => _('เข้าสู่ระบบด้วย Google', 'Continue with Google');
+  String get continueApple => _('เข้าสู่ระบบด้วย Apple', 'Continue with Apple');
   String get continueGuest => _('ใช้งานแบบผู้เยี่ยมชม', 'Continue as guest');
   String greeting(String name) => _('สวัสดีตอนบ่าย, $name', 'Good afternoon, $name');
   String get kcalLeft => _('กินได้อีก', 'KCAL LEFT');

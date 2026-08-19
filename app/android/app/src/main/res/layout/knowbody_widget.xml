@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/kb_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/widget_bg"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/kb_ring"
+        android:layout_width="112dp"
+        android:layout_height="112dp"
+        android:contentDescription="Calories left" />
+
+    <TextView
+        android:id="@+id/kb_streak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:text="🔥 0" />
+</LinearLayout>

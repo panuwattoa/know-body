@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../api/api_client.dart';
 import '../api/models.dart';
 import '../auth/auth.dart';
+import '../services/widget_service.dart';
 
 /// Base URL of the Go API. Override at build time:
 ///   flutter run --dart-define=API_BASE_URL=https://api.knowbody.app
@@ -22,7 +23,9 @@ final localeProvider = StateProvider<Locale>((ref) => const Locale('th'));
 
 /// Home screen data.
 final homeProvider = FutureProvider.autoDispose<Home>((ref) async {
-  return ref.watch(apiClientProvider).home();
+  final home = await ref.watch(apiClientProvider).home();
+  WidgetService.update(home); // refresh the home-screen widget (fire and forget)
+  return home;
 });
 
 /// Carried between onboarding steps.

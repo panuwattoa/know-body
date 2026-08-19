@@ -55,6 +55,13 @@ class Auth {
         authScreenLaunchMode: LaunchMode.externalApplication,
       );
 
+  /// OAuth via Apple (Sign in with Apple).
+  static Future<void> signInWithApple() => _c.auth.signInWithOAuth(
+        OAuthProvider.apple,
+        redirectTo: AuthConfig.oauthRedirect,
+        authScreenLaunchMode: LaunchMode.externalApplication,
+      );
+
   /// Continue as guest — a real anonymous account so data is still saved.
   static Future<void> continueAsGuest() => _c.auth.signInAnonymously();
 

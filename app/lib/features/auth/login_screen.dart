@@ -105,6 +105,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 10),
                 _outlined(
+                  icon: const Icon(Icons.apple, color: KbTokens.inkColor, size: 22),
+                  label: t.continueApple,
+                  onTap: _busy ? null : () => _oauth(Auth.signInWithApple),
+                ),
+                const SizedBox(height: 10),
+                _outlined(
                   icon: const Icon(Icons.person_outline, color: KbTokens.inkColor),
                   label: t.continueGuest,
                   onTap: _busy ? null : () => _oauth(Auth.continueAsGuest),
