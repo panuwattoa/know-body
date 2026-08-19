@@ -245,9 +245,10 @@ class Exercise {
   factory Exercise.fromJson(Map<String, dynamic> j) => Exercise(
         name: j['name'] ?? '',
         nameEn: j['nameEn'] ?? '',
-        sets: j['sets'] ?? 0,
-        reps: j['reps'] ?? 0,
-        secs: j['secs'] ?? 0,
+        // AI returns numbers as doubles (schema "number") — coerce to int.
+        sets: (j['sets'] as num?)?.toInt() ?? 0,
+        reps: (j['reps'] as num?)?.toInt() ?? 0,
+        secs: (j['secs'] as num?)?.toInt() ?? 0,
       );
   String get detail => secs > 0 ? '$sets × ${secs}s' : '$sets × $reps';
 }
@@ -270,8 +271,8 @@ class WorkoutPlan {
         titleEn: j['titleEn'] ?? '',
         focus: j['focus'] ?? '',
         day: j['day'] ?? '',
-        minutes: j['minutes'] ?? 0,
-        kcal: j['kcal'] ?? 0,
+        minutes: (j['minutes'] as num?)?.toInt() ?? 0,
+        kcal: (j['kcal'] as num?)?.toInt() ?? 0,
         moves: (j['moves'] as List? ?? []).map((e) => Exercise.fromJson(e)).toList(),
       );
 }
