@@ -1,0 +1,58 @@
+# Thai food nutrition data
+
+## Source & license
+
+The authoritative source is the **Online Thai Food Composition Database (Thai FCD)** by the
+**Institute of Nutrition, Mahidol University (INMU)** — https://inmu.mahidol.ac.th/thaifcd/
+(v3, Aug 2025; integrates the printed Thai Food Composition Tables 2015 & 1999).
+
+- **Non-commercial** use: free, with attribution to INMU as source/copyright holder.
+- **Commercial** use (KnowBody is monetized): **requires written permission.**
+  Contact: **kunchit.jud@mahidol.ac.th** (INMU).
+- There is **no public bulk download** — data is served via their online search UI. A licensed
+  data export (Excel/CSV) is obtained by arrangement after permission.
+
+Until permission + an export is in hand, the app ships a small **hand-curated** seed
+(`api/migrations/0002_seed_thai_foods.sql`) — our own approximate values, no license issue.
+
+## Permission-request email (send from your business account)
+
+> **To:** kunchit.jud@mahidol.ac.th
+> **Subject:** Request for commercial-use license — Online Thai Food Composition Database
+>
+> Dear Institute of Nutrition, Mahidol University,
+>
+> We are developing **KnowBody**, a mobile nutrition & fitness application for Thai users.
+> We would like to request permission to use the Online Thai Food Composition Database (Thai FCD)
+> for **commercial** purposes — specifically to power in-app food search and calorie estimation —
+> with full attribution to INMU as the data source.
+>
+> Could you advise on the licensing terms, fees (if any), and whether a data export (Excel/CSV)
+> can be provided for integration? We will display the required INMU attribution in-app.
+>
+> Thank you,
+> [Your name] · [company] · [contact]
+
+## Loading a licensed export
+
+Once you receive an Excel/CSV from INMU, export it to CSV with these columns (per 100 g edible
+portion), then run the loader — it emits a migration the app uses unchanged:
+
+```
+name_th,name_en,aliases,kcal_100g,protein_100g,carbs_100g,fat_100g
+ข้าวสวย,Steamed rice,ข้าว|rice|khao,130,2.7,28,0.3
+```
+- `aliases` is `|`-separated (optional).
+- Column names can differ — map them at the top of the loader.
+
+```bash
+node packages/thai-food/load_food_csv.mjs path/to/inmu_export.csv > api/migrations/0006_thai_fcd.sql
+psql "$DATABASE_URL" -f api/migrations/0006_thai_fcd.sql
+```
+
+The migration `INSERT`s into `thai_foods`; search (`/v1/foods/search`) and photo-matching
+(`MatchThaiFood`) work with the expanded data with no code changes.
+
+## Attribution (required)
+Show in the app (e.g., Settings → About): *"Thai food nutrition data © Institute of Nutrition,
+Mahidol University (INMU)."*
